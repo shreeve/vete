@@ -30,10 +30,10 @@ OptionParser.new.instance_eval do
 end.parse!(into: opts={}) rescue abort($!.message)
 
 # populate CLI options
-@bar = opts[:bar    ] || 20
-@chr = opts[:char   ] || "•"; @chr = @chr[0]
-@rmf = opts[:reset  ]
-@wrk = opts[:workers] || 1
+@char = opts[:char   ] || "•"; @char = @char[0]
+@nuke = opts[:reset  ]
+@wide = opts[:bar    ] || 20
+@work = opts[:workers] || 1
 
 # define job directories
 @vete = File.expand_path(".vete")
@@ -42,7 +42,7 @@ end.parse!(into: opts={}) rescue abort($!.message)
 @done = File.join(@vete, "done")
 @bomb = File.join(@vete, "bomb")
 
-if @rmf
+if @nuke
   FileUtils.rm_rf @vete
   exit
 end
@@ -74,10 +74,10 @@ def draw(rows, done=0, live=0, bomb=0, jobs=0, info=nil)
   unless info
     print [
       clear,
-      go(2 + rows, @len + 3) + "└" + "─" * (@bar + 2) + "┘\n",
-      go(1       , @len + 3) + "┌" + "─" * (@bar + 2) + "┐\n",
+      go(2 + rows, @len + 3) + "└" + "─" * (@wide + 2) + "┘\n",
+      go(1       , @len + 3) + "┌" + "─" * (@wide + 2) + "┐\n",
     ].join
-    rows.times {|i| print " %*d │ %*s │\n" % [@len, i + 1, @bar, ""] }
+    rows.times {|i| print " %*d │ %*s │\n" % [@len, i + 1, @wide, ""] }
     return
   end
 
@@ -87,20 +87,20 @@ def draw(rows, done=0, live=0, bomb=0, jobs=0, info=nil)
   most = info.values.max
   info.each do |slot, this|
     tpct = this.to_f / most
-    cols = dpct * tpct * @bar
-    print go(slot + 1, @len + 5) + bg("5383ec") + @chr * cols
+    cols = dpct * tpct * @wide
+    print go(slot + 1, @len + 5) + bg("5383ec") + @char * cols
   end
 
   # summary bar
-  gcol = dpct * @bar
-  ycol = lpct * @bar
+  gcol = dpct * @wide
+  ycol = lpct * @wide
   print [
     go(rows + 3, @len + 5),
     fg("fff"),
-    bg("58a65c") + @chr * (       gcol       )     , #  green (done)
-    bg("f1bf42") + @chr * (              ycol)     , # yellow (live) <= Add live
-    bg("d85140") + " "  * (@bar - gcol - ycol).ceil, #    red (left)
-    go(rows + 3, @len + 5 + @bar + 3) + " %.1f%% done " % [dpct * 100],
+    bg("58a65c") + @char * (       gcol       )     , #  green (done)
+    bg("f1bf42") + @char * (              ycol)     , # yellow (live) <= Add live
+    bg("d85140") + " "  * (@wide - gcol - ycol).ceil, #    red (left)
+    go(rows + 3, @len + 5 + @wide + 3) + " %.1f%% done " % [dpct * 100],
     bomb == 0 ? nil : (bg + " " + bg("f1bf42") + " #{bomb} bombed "),
   ].join
 
@@ -120,9 +120,9 @@ FileUtils.mkdir_p @bomb
 
 # ==[ Configure workers ]=====================================================
 
-@len = @wrk.to_s.size
+@len = @work.to_s.size
 @mtx = Mutex.new
-@que = Thread::Queue.new; @wrk.times {|slot| @que << (slot + 1) }
+@que = Thread::Queue.new; @work.times {|slot| @que << (slot + 1) }
 
 begin
   list = Dir[File.join(@todo, "*")]
@@ -132,7 +132,7 @@ begin
   setup
 
   cursor(false)
-  draw(@wrk)
+  draw(@work)
 
   time = Time.now
   done = 0
@@ -145,7 +145,7 @@ begin
         live += 1
       }
       show = "Working on task " + File.basename(path)
-      print go(slot + 1, @len + 5 + @bar + 3) + show
+      print go(slot + 1, @len + 5 + @wide + 3) + show
       if chld = fork # parent
         Thread.new do
           okay = Process.waitpid2(chld)[1] == 0
@@ -158,22 +158,22 @@ begin
             info[slot] += 1
           }
         end
-        draw(@wrk, done, live, bomb, jobs, info.dup)
+        draw(@work, done, live, bomb, jobs, info.dup)
       else
         perform(slot, path)
         exit
       end
     end
   end.join
-  draw(@wrk, done, live, bomb, jobs, info)
+  draw(@work, done, live, bomb, jobs, info)
   secs = Time.now.to_f - time.to_f
 
   # summary
   print [
-    go(@wrk + 5, 1),
+    go(@work + 5, 1),
     "%.2f secs" % secs,
     " for #{jobs} jobs",
-    " by #{@wrk} workers",
+    " by #{@work} workers",
     " @ %.2f jobs/sec" % [jobs / secs]
   ].join + "\n\n"
 
