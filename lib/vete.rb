@@ -4,8 +4,6 @@
 # Author: Steve Shreeve (steve.shreeve@gmail.com)
 #   Date: Mar 21, 2023
 # ============================================================================
-# TODO: 1) progress should update until all workers have *finished*
-# ============================================================================
 
 STDOUT.sync = true
 
@@ -21,7 +19,7 @@ trap("INT"  ) { print clear + go; abort "\n" }
 trap("WINCH") { print clear or draw if @pid == Process.pid }
 
 OptionParser.new.instance_eval do
-  @version = "0.5.0"
+  @version = "0.5.1"
   @banner  = "usage: #{program_name} [options]"
 
   on "-b", "--bar <width>"            , "Progress bar width, in characters", Integer
@@ -195,6 +193,10 @@ begin
         perform(path)
         exit
       end
+    end
+    while @que.size != @work
+      sleep 1
+      draw(live, done, bomb, jobs, info.dup)
     end
   end.join
   secs = Time.now.to_f - time.to_f
