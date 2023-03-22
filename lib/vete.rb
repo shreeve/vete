@@ -192,7 +192,7 @@ begin
         when "task"  then sleep task
         when Numeric then sleep task * @wait
         end if task < @work
-        perform(slot, path)
+        perform(path)
         exit
       end
     end
