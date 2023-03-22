@@ -160,6 +160,7 @@ begin
   done = 0
   live = 0
   bomb = 0
+  time = Time.now
   Thread.new do
     list.each do |path|
       slot = @que.pop
