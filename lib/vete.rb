@@ -122,7 +122,7 @@ def draw(done=0, live=0, bomb=0, jobs=0, info=nil)
     go(@work + 3, @len + 5),
     fg("fff"),
     bg("58a65c") + @char * (       gcol       )     , #  green (done)
-    bg("f1bf42") + @char * (              ycol)     , # yellow (live) <= Add live
+    bg("f1bf42") + @char * (              ycol)     , # yellow (live)
     bg("d85140") + " "  * (@wide - gcol - ycol).ceil, #    red (left)
     go(@work + 3, @len + 5 + @wide + 3) + " %.1f%% done " % [dpct * 100],
     bomb == 0 ? nil : (bg + " " + bg("f1bf42") + " #{bomb} bombed "),
