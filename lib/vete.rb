@@ -80,10 +80,10 @@ end
 
 # https://www.cse.psu.edu/~kxc104/class/cmpen472/16f/hw/hw8/vt100ansi.htm
 
-def clear      ; "\e[2J"                        ; end
-def cursor(on) ; print on ? "\e[?25h": "\e[?25l"; end
-def go(r=1,c=1); "\e[#{r};#{c}H"                ; end
-def go!(...)   ; print go(...)                  ; end
+def clear(line=nil); line ? "\e[K" : "\e[2J"        ; end
+def cursor(on)     ; print on ? "\e[?25h": "\e[?25l"; end
+def go(r=1,c=1)    ; "\e[#{r};#{c}H"                ; end
+def go!(...)       ; print go(...)                  ; end
 
 def fg(rgb=nil); rgb ? "\e[38;2;#{hx(rgb)}m" : "\e[39m"; end
 def bg(rgb=nil); rgb ? "\e[48;2;#{hx(rgb)}m" : "\e[49m"; end
@@ -168,7 +168,7 @@ begin
         live += 1
       }
       show = "Working on task " + File.basename(path)
-      print go(slot + 1, @len + 5 + @wide + 3) + show
+      print go(slot + 1, @len + 5 + @wide + 3) + show + clear(true)
       if chld = fork # parent
         Thread.new do
           okay = Process.waitpid2(chld)[1] == 0
