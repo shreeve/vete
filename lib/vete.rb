@@ -19,7 +19,7 @@ trap("INT"  ) { print clear + go; abort "\n" }
 trap("WINCH") { print clear or draw if @pid == Process.pid }
 
 OptionParser.new.instance_eval do
-  @version = "0.6.3"
+  @version = "0.6.4"
   @banner  = "usage: #{program_name} [options]"
 
   on "-b", "--bar <width>"            , "Progress bar width, in characters", Integer
@@ -31,7 +31,7 @@ OptionParser.new.instance_eval do
   on "-w", "--workers <count>"        , "Set the number of workers (default is 1)", Integer
 
   self
-end.parse!(into: opts={}) rescue abort($!.message)
+end.parse!(into: @opts = opts = {}) rescue abort($!.message)
 
 # populate CLI options
 @char = opts[:char   ] || "•"; @char = @char[0]
