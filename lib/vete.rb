@@ -156,7 +156,6 @@ begin
   setup if defined?(setup)
 
   cursor(false)
-  time = Time.now
   draw
   done = 0
   live = 0
