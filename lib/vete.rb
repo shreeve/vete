@@ -144,16 +144,6 @@ def draw(live=0, done=0, bomb=0, jobs=0, info=nil)
   print fg + bg
 end
 
-# ==[ Simulate job creation, add helpers so vete makes this easy ]============
-
-FileUtils.rm_rf   @vete
-FileUtils.mkdir_p @todo
-FileUtils.mkdir_p @live
-FileUtils.mkdir_p @done
-FileUtils.mkdir_p @bomb
-
-100.times {|i| FileUtils.touch(File.join(@todo, (i + 1).to_s)) }
-
 # ==[ Configure workers ]=====================================================
 
 @len = @work.to_s.size
