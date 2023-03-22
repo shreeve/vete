@@ -92,7 +92,7 @@ def hx(str=nil); str =~ /\A#?(?:(\h\h)(\h\h)(\h\h)|(\h)(\h)(\h))\z/ or return
   [r.hex, g.hex, b.hex] * ";"
 end
 
-def draw(done=0, live=0, bomb=0, jobs=0, info=nil)
+def draw(live=0, done=0, bomb=0, jobs=0, info=nil)
 
   # outer box
   unless info
@@ -106,8 +106,8 @@ def draw(done=0, live=0, bomb=0, jobs=0, info=nil)
   end
 
   # worker bars
-  dpct = done.to_f / jobs
   lpct = live.to_f / jobs
+  dpct = done.to_f / jobs
   most = info.values.max
   info.each do |slot, this|
     tpct = this.to_f / most
@@ -157,8 +157,8 @@ begin
 
   cursor(false)
   draw
-  done = 0
   live = 0
+  done = 0
   bomb = 0
   time = Time.now
   Thread.new do
@@ -175,13 +175,13 @@ begin
           move(path, okay ? @done : @bomb)
           @que.push(slot)
           @mtx.synchronize {
-            done += 1
             live -= 1
+            done += 1
             bomb += 1 unless okay
             info[slot] += 1
           }
         end
-        draw(done, live, bomb, jobs, info.dup)
+        draw(live, done, bomb, jobs, info.dup)
       else
         perform(slot, path)
         exit
