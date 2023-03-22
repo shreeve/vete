@@ -151,6 +151,8 @@ end
 @que = Thread::Queue.new; @work.times {|slot| @que << (slot + 1) }
 
 begin
+  setup if defined?(setup)
+
   list = Dir[File.join(@todo, "*")]
 
   live = 0
@@ -158,8 +160,6 @@ begin
   bomb = 0
   jobs = list.size
   info = Hash.new(0)
-
-  setup if defined?(setup)
 
   cursor(false)
   draw
