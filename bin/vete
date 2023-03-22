@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+ARGV.push("-r") if ARGV.empty?
+
+require "vete"
