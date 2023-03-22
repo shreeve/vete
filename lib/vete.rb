@@ -16,7 +16,7 @@ require "thread"
 trap("INT" ) { print clear + go; abort "\n" }
 
 OptionParser.new.instance_eval do
-  @version = "0.1.0"
+  @version = "0.2.0"
   @banner  = "usage: #{program_name} [options]"
 
   on "-b", "--bar <width>"            , "Progress bar width, in characters", Integer
@@ -42,14 +42,34 @@ end.parse!(into: opts={}) rescue abort($!.message)
 @done = File.join(@vete, "done")
 @bomb = File.join(@vete, "bomb")
 
-if @nuke
-  FileUtils.rm_rf @vete
-  exit
-end
 
 def move(path, dest)
   dest = File.join(dest, File.basename(path))
-  FileUtils.mv(path, dest)
+  FileUtils.mv(path, dest, force: true, secure: true)
+end
+
+def nuke
+  FileUtils.rm_rf(@vete)
+end
+
+if @nuke
+  nuke
+  exit
+end
+
+def vete_init
+  nuke
+  list = [@todo, @live, @done, @bomb]
+  list.each {|path| File.mkdir_p(path, force: true, secure: true) }
+end
+
+def vete_retry
+  list = Dir.glob(File.join(@bomb, "*")).sort.each {|path| FileUtils.touch(path) }
+  move(list, @todo)
+end
+
+def vete_todo(path)
+  FileUtils.touch(path, force: true, secure: true)
 end
 
 # ==[ Drawing ]===============================================================
