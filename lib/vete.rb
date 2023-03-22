@@ -26,8 +26,9 @@ OptionParser.new.instance_eval do
 
   on "-b", "--bar <width>"            , "Progress bar width, in characters", Integer
   on "-c", "--char <character>"       , "Character to use for progress bar", String
-  on "-r", "--reset"                  , "Remove directory used for job processing and quit"
+  on "-d", "--delay <mode>"           , "Delay mode (rand, task, numeric)"
   on "-h", "--help"                   , "Show help and command usage" do Kernel.abort to_s; end
+  on "-r", "--reset"                  , "Remove directory used for job processing and quit"
   on "-v", "--version"                , "Show version number" do Kernel.abort "#{program_name} #{@version}"; end
   on "-w", "--workers <count>"        , "Set the number of workers (default is 1)", Integer
 
@@ -36,9 +37,20 @@ end.parse!(into: opts={}) rescue abort($!.message)
 
 # populate CLI options
 @char = opts[:char   ] || "•"; @char = @char[0]
+@wait = opts[:delay  ]
 @nuke = opts[:reset  ]
 @wide = opts[:bar    ] || 20
 @work = opts[:workers] || 1
+
+# handle wait mode
+case @wait
+when "rand", "task", nil
+when /\A(?:0|[1-9]\d*|(?:0?\.|[1-9]\d*\.)\d*)\z/
+  @wait = @wait.to_f
+  @wait > 0 or abort "invalid delay time (#{@wait.to_f} secs)"
+else
+  abort "invalid delay mode '#{@wait}'"
+end
 
 # define job directories
 @vete = File.expand_path(".vete")
@@ -162,7 +174,7 @@ begin
   bomb = 0
   time = Time.now
   Thread.new do
-    list.each do |path|
+    list.each_with_index do |path, task|
       slot = @que.pop
       @mtx.synchronize {
         live += 1
@@ -183,6 +195,11 @@ begin
         end
         draw(live, done, bomb, jobs, info.dup)
       else
+        case @wait
+        when "rand"  then sleep rand(@work)
+        when "task"  then sleep task
+        when Numeric then sleep task * @wait
+        end if task < @work
         perform(slot, path)
         exit
       end
