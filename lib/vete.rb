@@ -4,6 +4,8 @@
 # Author: Steve Shreeve (steve.shreeve@gmail.com)
 #   Date: Mar 21, 2023
 # ============================================================================
+# TODO: 1) progress should update until all workers have *finished*
+# ============================================================================
 
 STDOUT.sync = true
 
@@ -41,7 +43,6 @@ end.parse!(into: opts={}) rescue abort($!.message)
 @live = File.join(@vete, "live")
 @done = File.join(@vete, "done")
 @bomb = File.join(@vete, "bomb")
-
 
 def move(path, dest)
   dest = File.join(dest, File.basename(path))
