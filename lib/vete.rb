@@ -92,16 +92,16 @@ def hx(str=nil); str =~ /\A#?(?:(\h\h)(\h\h)(\h\h)|(\h)(\h)(\h))\z/ or return
   [r.hex, g.hex, b.hex] * ";"
 end
 
-def draw(rows, done=0, live=0, bomb=0, jobs=0, info=nil)
+def draw(done=0, live=0, bomb=0, jobs=0, info=nil)
 
   # outer box
   unless info
     print [
       clear,
-      go(2 + rows, @len + 3) + "└" + "─" * (@wide + 2) + "┘\n",
-      go(1       , @len + 3) + "┌" + "─" * (@wide + 2) + "┐\n",
+      go(2 + @work, @len + 3) + "└" + "─" * (@wide + 2) + "┘\n",
+      go(1        , @len + 3) + "┌" + "─" * (@wide + 2) + "┐\n",
     ].join
-    rows.times {|i| print " %*d │ %*s │\n" % [@len, i + 1, @wide, ""] }
+    @work.times {|i| print " %*d │ %*s │\n" % [@len, i + 1, @wide, ""] }
     return
   end
 
@@ -119,12 +119,12 @@ def draw(rows, done=0, live=0, bomb=0, jobs=0, info=nil)
   gcol = dpct * @wide
   ycol = lpct * @wide
   print [
-    go(rows + 3, @len + 5),
+    go(@work + 3, @len + 5),
     fg("fff"),
     bg("58a65c") + @char * (       gcol       )     , #  green (done)
     bg("f1bf42") + @char * (              ycol)     , # yellow (live) <= Add live
     bg("d85140") + " "  * (@wide - gcol - ycol).ceil, #    red (left)
-    go(rows + 3, @len + 5 + @wide + 3) + " %.1f%% done " % [dpct * 100],
+    go(@work + 3, @len + 5 + @wide + 3) + " %.1f%% done " % [dpct * 100],
     bomb == 0 ? nil : (bg + " " + bg("f1bf42") + " #{bomb} bombed "),
   ].join
 
@@ -156,9 +156,8 @@ begin
   setup
 
   cursor(false)
-  draw(@work)
-
   time = Time.now
+  draw
   done = 0
   live = 0
   bomb = 0
@@ -182,14 +181,13 @@ begin
             info[slot] += 1
           }
         end
-        draw(@work, done, live, bomb, jobs, info.dup)
+        draw(done, live, bomb, jobs, info.dup)
       else
         perform(slot, path)
         exit
       end
     end
   end.join
-  draw(@work, done, live, bomb, jobs, info)
   secs = Time.now.to_f - time.to_f
 
   # summary
