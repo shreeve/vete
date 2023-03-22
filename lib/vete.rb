@@ -132,10 +132,10 @@ def draw(live=0, done=0, died=0, jobs=0, info=nil)
   print [
     go(@work + 3, @len + 5),
     fg("fff"),
-    bg("58a65c") + @char * (       gcol       )     , #  green (done)
-    bg("f1bf42") + @char * (              ycol)     , # yellow (live)
+    bg("58a65c") + @char * (       gcol       ),      #  green (done)
+    bg("f1bf42") + @char * (              ycol),      # yellow (live)
     bg("d85140") + " "  * (@wide - gcol - ycol).ceil, #    red (rest)
-    go(@work + 3, @len + 5 + @wide + 3)             , # scoot over...
+    go(@work + 3, @len + 5 + @wide + 3),
     bg("5383ec") + " %.1f%% " % [ppct * 100],         #   blue (done + died)
     done > 0 ? (bg + " " + bg("58a65c") + " #{done} done ") : nil,
     died > 0 ? (bg + " " + bg("d85140") + " #{died} died ") : nil,
