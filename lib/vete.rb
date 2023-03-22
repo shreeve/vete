@@ -19,7 +19,7 @@ trap("INT"  ) { print clear + go; abort "\n" }
 trap("WINCH") { print clear or draw if @pid == Process.pid }
 
 OptionParser.new.instance_eval do
-  @version = "0.5.1"
+  @version = "0.6.0"
   @banner  = "usage: #{program_name} [options]"
 
   on "-b", "--bar <width>"            , "Progress bar width, in characters", Integer
@@ -55,7 +55,7 @@ end
 @todo = File.join(@vete, "todo")
 @live = File.join(@vete, "live")
 @done = File.join(@vete, "done")
-@bomb = File.join(@vete, "bomb")
+@died = File.join(@vete, "died")
 
 def move(path, dest)
   dest = File.join(dest, File.basename(path))
@@ -73,12 +73,12 @@ end
 
 def vete_init
   nuke
-  list = [@todo, @live, @done, @bomb]
+  list = [@todo, @live, @done, @died]
   list.each {|path| FileUtils.mkdir_p(path) }
 end
 
 def vete_retry
-  list = Dir.glob(File.join(@bomb, "*")).sort.each {|path| FileUtils.touch(path) }
+  list = Dir.glob(File.join(@died, "*")).sort.each {|path| FileUtils.touch(path) }
   move(list, @todo)
 end
 
@@ -102,7 +102,7 @@ def hx(str=nil); str =~ /\A#?(?:(\h\h)(\h\h)(\h\h)|(\h)(\h)(\h))\z/ or return
   [r.hex, g.hex, b.hex] * ";"
 end
 
-def draw(live=0, done=0, bomb=0, jobs=0, info=nil)
+def draw(live=0, done=0, died=0, jobs=0, info=nil)
 
   # outer box
   unless info
@@ -116,16 +116,17 @@ def draw(live=0, done=0, bomb=0, jobs=0, info=nil)
   end
 
   # worker bars
-  lpct = live.to_f / jobs
-  dpct = done.to_f / jobs
+  ppct = (done + died).to_f / jobs
   most = info.values.max
   info.each do |slot, this|
     tpct = this.to_f / most
-    cols = dpct * tpct * @wide
+    cols = ppct * tpct * @wide
     print go(slot + 1, @len + 5) + bg("5383ec") + @char * cols
   end
 
   # summary bar
+  dpct = done.to_f / jobs
+  lpct = live.to_f / jobs
   gcol = dpct * @wide
   ycol = lpct * @wide
   print [
@@ -133,9 +134,11 @@ def draw(live=0, done=0, bomb=0, jobs=0, info=nil)
     fg("fff"),
     bg("58a65c") + @char * (       gcol       )     , #  green (done)
     bg("f1bf42") + @char * (              ycol)     , # yellow (live)
-    bg("d85140") + " "  * (@wide - gcol - ycol).ceil, #    red (left)
-    go(@work + 3, @len + 5 + @wide + 3) + " %.1f%% done " % [dpct * 100],
-    bomb == 0 ? nil : (bg + " " + bg("f1bf42") + " #{bomb} bombed "),
+    bg("d85140") + " "  * (@wide - gcol - ycol).ceil, #    red (rest)
+    go(@work + 3, @len + 5 + @wide + 3)             , # scoot over...
+    bg("5383ec") + " %.1f%% " % [ppct * 100],         #   blue (done + died)
+    done > 0 ? (bg + " " + bg("58a65c") + " #{done} done ") : nil,
+    died > 0 ? (bg + " " + bg("d85140") + " #{died} died ") : nil,
   ].join
 
   # clear colors
@@ -155,7 +158,7 @@ begin
 
   live = 0
   done = 0
-  bomb = 0
+  died = 0
   jobs = list.size
   info = Hash.new(0)
 
@@ -174,16 +177,15 @@ begin
       if chld = fork # parent
         Thread.new do
           okay = Process.waitpid2(chld)[1] == 0
-          move(path, okay ? @done : @bomb)
+          move(path, okay ? @done : @died)
           @que.push(slot)
           @mtx.synchronize {
             live -= 1
-            done += 1
-            bomb += 1 unless okay
+            okay ? (done += 1) : (died += 1)
             info[slot] += 1
           }
         end
-        draw(live, done, bomb, jobs, info.dup)
+        draw(live, done, died, jobs, info.dup)
       else
         case @wait
         when "rand"  then sleep rand(@work)
@@ -196,7 +198,7 @@ begin
     end
     while @que.size != @work
       sleep 1
-      draw(live, done, bomb, jobs, info.dup)
+      draw(live, done, died, jobs, info.dup)
     end
   end.join
   secs = Time.now.to_f - time.to_f
