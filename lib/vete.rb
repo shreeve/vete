@@ -197,7 +197,7 @@ begin
       end
     end
     while @que.size != @work
-      sleep 1
+      sleep 0.3
       draw(live, done, died, jobs, info.dup)
     end
   end.join
