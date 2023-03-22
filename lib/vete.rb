@@ -152,6 +152,10 @@ end
 
 begin
   list = Dir[File.join(@todo, "*")]
+
+  live = 0
+  done = 0
+  bomb = 0
   jobs = list.size
   info = Hash.new(0)
 
@@ -159,9 +163,7 @@ begin
 
   cursor(false)
   draw
-  live = 0
-  done = 0
-  bomb = 0
+
   time = Time.now
   Thread.new do
     list.each_with_index do |path, task|
