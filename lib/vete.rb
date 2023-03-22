@@ -153,7 +153,7 @@ begin
   jobs = list.size
   info = Hash.new(0)
 
-  setup
+  setup if defined?(setup)
 
   cursor(false)
   time = Time.now
