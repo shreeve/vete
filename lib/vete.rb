@@ -15,7 +15,10 @@ require "fileutils"
 require "optparse"
 require "thread"
 
-trap("INT" ) { print clear + go; abort "\n" }
+@pid = Process.pid
+
+trap("INT"  ) { print clear + go; abort "\n" }
+trap("WINCH") { print clear or draw if @pid == Process.pid }
 
 OptionParser.new.instance_eval do
   @version = "0.2.0"
