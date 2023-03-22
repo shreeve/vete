@@ -76,7 +76,7 @@ end
 def vete_init
   nuke
   list = [@todo, @live, @done, @bomb]
-  list.each {|path| File.mkdir_p(path, force: true, secure: true) }
+  list.each {|path| FileUtils.mkdir_p(path) }
 end
 
 def vete_retry
@@ -85,7 +85,7 @@ def vete_retry
 end
 
 def vete_todo(path)
-  FileUtils.touch(path, force: true, secure: true)
+  FileUtils.touch(File.join(@todo, path.to_s))
 end
 
 # ==[ Drawing ]===============================================================
