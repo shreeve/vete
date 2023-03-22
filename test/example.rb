@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 def setup
+  100.times {|i| vete_todo(i + 1) }
   @time = Time.now
 end
 
