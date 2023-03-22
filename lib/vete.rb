@@ -82,8 +82,9 @@ def vete_retry
   move(list, @todo)
 end
 
-def vete_todo(path)
-  FileUtils.touch(File.join(@todo, path.to_s))
+def vete_todo(path, data=nil)
+  path = File.join(@todo, path.to_s)
+  data ? File.write(path, data) : FileUtils.touch(path)
 end
 
 # ==[ Drawing ]===============================================================
