@@ -140,7 +140,7 @@ FileUtils.mkdir_p @live
 FileUtils.mkdir_p @done
 FileUtils.mkdir_p @bomb
 
-1.upto(100) {|i| FileUtils.touch(File.join(@todo, i.to_s)) }
+100.times {|i| FileUtils.touch(File.join(@todo, (i + 1).to_s)) }
 
 # ==[ Configure workers ]=====================================================
 
