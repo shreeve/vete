@@ -96,12 +96,18 @@ def cursor(on)     ; print on ? "\e[?25h": "\e[?25l"; end
 def go(r=1,c=1)    ; "\e[#{r};#{c}H"                ; end
 def go!(...)       ; print go(...)                  ; end
 
-def fg(rgb=nil); rgb ? "\e[38;2;#{hx(rgb)}m" : "\e[39m"; end
-def bg(rgb=nil); rgb ? "\e[48;2;#{hx(rgb)}m" : "\e[49m"; end
-def hx(str=nil); str =~ /\A#?(?:(\h\h)(\h\h)(\h\h)|(\h)(\h)(\h))\z/ or return
-  r, g, b = $1 ? [$1, $2, $3] : [$4*2, $5*2, $6*2]
-  [r.hex, g.hex, b.hex] * ";"
+@hex={}
+
+def hex(str=nil)
+  @hex[str] ||= begin
+    str =~ /\A#?(?:(\h\h)(\h\h)(\h\h)|(\h)(\h)(\h))\z/ or return
+    r, g, b = $1 ? [$1, $2, $3] : [$4*2, $5*2, $6*2]
+    [r.hex, g.hex, b.hex] * ";"
+  end
 end
+
+def fg(rgb=nil); rgb ? "\e[38;2;#{hex(rgb)}m" : "\e[39m"; end
+def bg(rgb=nil); rgb ? "\e[48;2;#{hex(rgb)}m" : "\e[49m"; end
 
 def draw(live=0, done=0, died=0, jobs=0, info=nil)
 
