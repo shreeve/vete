@@ -78,7 +78,7 @@ end
 
 def vete_retry
   list = Dir.glob(File.join(@died, "*")).sort.each {|path| FileUtils.touch(path) }
-  move(list, @todo)
+  list.empty? ? false : !!move(list, @todo)
 end
 
 def vete_todo(path, data=nil)
