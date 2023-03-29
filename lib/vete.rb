@@ -53,7 +53,6 @@ end
 # define job directories
 @vete = File.expand_path(".vete")
 @todo = File.join(@vete, "todo")
-@live = File.join(@vete, "live")
 @done = File.join(@vete, "done")
 @died = File.join(@vete, "died")
 
@@ -73,7 +72,7 @@ end
 
 def vete_init
   nuke
-  list = [@todo, @live, @done, @died]
+  list = [@todo, @done, @died]
   list.each {|path| FileUtils.mkdir_p(path) }
 end
 
