@@ -2,7 +2,7 @@
 # vete - Ruby CLI to spawn processes to get work done
 #
 # Author: Steve Shreeve (steve.shreeve@gmail.com)
-#   Date: Mar 22, 2023
+#   Date: June 29, 2023
 # ============================================================================
 
 STDOUT.sync = true
@@ -19,7 +19,7 @@ trap("INT"  ) { print clear + go; abort "\n" }
 trap("WINCH") { print clear or draw if @pid == Process.pid }
 
 OptionParser.new.instance_eval do
-  @version = "0.6.6"
+  @version = "0.6.7"
   @banner  = "usage: #{program_name} [options]"
 
   on "-b", "--bar <width>"            , "Progress bar width, in characters", Integer
@@ -143,8 +143,8 @@ def draw(live=0, done=0, died=0, jobs=0, info=nil)
     bg("d85140") + " "  * (@wide - gcol - ycol).ceil, #    red (rest)
     go(@work + 3, @len + 5 + @wide + 3),
     bg("5383ec") + " %.1f%% " % [ppct * 100],         #   blue (done + died)
-    done > 0 ? (bg + " " + bg("58a65c") + " #{done} done ") : nil,
-    died > 0 ? (bg + " " + bg("d85140") + " #{died} died ") : nil,
+    done > 0 ? (bg + " " + bg("58a65c") + " #{done}/#{jobs} done ") : nil,
+    died > 0 ? (bg + " " + bg("d85140") +         " #{died} died ") : nil,
   ].join
 
   # clear colors
