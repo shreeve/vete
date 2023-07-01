@@ -10,8 +10,8 @@ end
 
 def perform(task)
   sleep rand
-  secs = Time.now - @time
   exit 1 if rand < 0.03
+  secs = Time.now - @time # @time defined in setup
 end
 
 require_relative "../lib/vete"
