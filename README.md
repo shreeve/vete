@@ -4,7 +4,7 @@ Ruby CLI to spawn processes to get work done
 
 The phrase "¡véte!" in Spanish means, basically, "Get out!". This tool helps to clear out work in a hurry, using a simple approach of spawning a set number of concurrent processes to handle each job. Jobs are defined as files in a directory, so there is no need for a database or any other complexity.
 
-### API
+### Summary
 
 To use `vete`, there are three steps:
 
@@ -142,3 +142,16 @@ usage: vete [options]
     -v, --version                    Show version number
     -w, --workers <count>            Set the number of workers (default is 1)
 ```
+
+Running a `vete` enabled script (ie - one that contains `require "vete"` as the last
+line of the file) will automatically extend the `vete` command line utility. As a result,
+you can run your `vete` enabled script directly and pass any of the above command line
+options, as follows:
+
+```shell
+test/example.rb -w 10
+```
+
+This will run the `example.rb` file (which creates 100 tasks) and it will spawn 10
+concurrent processes to perform the work. See the screencast at the top of this file
+to see how this works.
