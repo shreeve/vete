@@ -14,4 +14,4 @@ def perform(task)
   exit 1 if rand < 0.08 # 8% chance of failure
 end
 
-require_relative "../lib/vete"
+require "vete"
