@@ -157,11 +157,8 @@ end
 @mtx = Mutex.new
 @que = Thread::Queue.new; @work.times {|slot| @que << (slot + 1) }
 
-begin
-  setup if defined?(setup)
-
-  list = Dir[File.join(@todo, "*")]
-
+defined?(setup  ) and setup
+defined?(perform) and list = Dir[File.join(@todo, "*")] and !list.empty? and begin
   live = 0
   done = 0
   died = 0
