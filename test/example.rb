@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
 
 def setup
-  vete_init
-  100.times {|i| vete_todo(i + 1) }
+  vete_retry or begin
+    vete_init
+    100.times {|i| vete_todo(i + 1) }
+  end
   @time = Time.now
 end
 
