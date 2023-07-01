@@ -10,8 +10,8 @@ end
 
 def perform(task)
   sleep rand
-  exit 1 if rand < 0.03
   secs = Time.now - @time # @time defined in setup
+  exit 1 if rand < 0.08 # 8% chance of failure
 end
 
 require_relative "../lib/vete"
