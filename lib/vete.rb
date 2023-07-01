@@ -19,7 +19,7 @@ trap("INT"  ) { print clear + go; abort "\n" }
 trap("WINCH") { print clear or draw if @pid == Process.pid }
 
 OptionParser.new.instance_eval do
-  @version = "1.0.2"
+  @version = "1.0.3"
   @banner  = "usage: #{program_name} [options] [filename]"
 
   on "-b", "--bar <width>"            , "Progress bar width, in characters", Integer
@@ -197,6 +197,8 @@ defined?(perform) and list = Dir[File.join(@todo, "*")] and !list.empty? and beg
         when "task"  then sleep task
         when Numeric then sleep task * @wait
         end if task < @work
+        @slot = slot + 1
+        @task = path
         perform(path)
         exit
       end
