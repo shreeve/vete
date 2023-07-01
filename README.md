@@ -130,7 +130,7 @@ run `vete -r` to remove the entire `.vete` directory.
 
 Running `vete -h` provides some additional help:
 
-```shell
+```text
 $ vete -h
 
 usage: vete [options]
