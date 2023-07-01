@@ -19,8 +19,8 @@ trap("INT"  ) { print clear + go; abort "\n" }
 trap("WINCH") { print clear or draw if @pid == Process.pid }
 
 OptionParser.new.instance_eval do
-  @version = "1.0.1"
-  @banner  = "usage: #{program_name} [options]"
+  @version = "1.0.2"
+  @banner  = "usage: #{program_name} [options] [filename]"
 
   on "-b", "--bar <width>"            , "Progress bar width, in characters", Integer
   on "-c", "--char <character>"       , "Character to use for progress bar", String
@@ -151,7 +151,9 @@ def draw(live=0, done=0, died=0, jobs=0, info=nil)
   print fg + bg
 end
 
-# ==[ Configure workers ]=====================================================
+# ==[ Let 'er rip! ]==========================================================
+
+load(ARGV.first) unless ARGV.empty?
 
 @len = @work.to_s.size
 @mtx = Mutex.new
