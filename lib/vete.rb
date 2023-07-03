@@ -127,7 +127,7 @@ def draw(live=0, done=0, died=0, jobs=0, info=nil)
   info.each do |slot, this|
     tpct = this.to_f / most
     cols = ppct * tpct * @wide
-    print go(slot + 1, @len + 5) + bg("5383ec") + @char * cols # fg("fff")
+    print go(slot + 1, @len + 5) + bg("5383ec") + @char * cols + bg
   end
 
   # summary bar
