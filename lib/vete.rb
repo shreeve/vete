@@ -145,10 +145,7 @@ def draw(live=0, done=0, died=0, jobs=0, info=nil)
     bg("5383ec") + " %.1f%% " % [ppct * 100],         #   blue (done + died)
     done > 0 ? (bg + " " + bg("58a65c") + " #{done}/#{jobs} done ") : nil,
     died > 0 ? (bg + " " + bg("d85140") +         " #{died} died ") : nil,
-  ].join
-
-  # clear colors
-  print fg + bg
+  ].join + fg + bg
 end
 
 # ==[ Let 'er rip! ]==========================================================
