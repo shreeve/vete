@@ -110,12 +110,12 @@ def bg(rgb=nil); rgb ? "\e[48;2;#{hex(rgb)}m" : "\e[49m"; end
 
 def draw(live=0, done=0, died=0, jobs=0, info=nil)
 
-  # outer box
+  # outer box # # ╰╯╭╮─└┘┌┐
   unless info
     print [
       clear,
-      go(2 + @work, @len + 3) + "└" + "─" * (@wide + 2) + "┘\n",
-      go(1        , @len + 3) + "┌" + "─" * (@wide + 2) + "┐\n",
+      go(2 + @work, @len + 3) + "╰" + "─" * (@wide + 2) + "╯\n",
+      go(1        , @len + 3) + "╭" + "─" * (@wide + 2) + "╮\n",
     ].join
     @work.times {|i| print " %*d │ %*s │\n" % [@len, i + 1, @wide, ""] }
     return
