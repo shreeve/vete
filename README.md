@@ -115,7 +115,7 @@ are needed when processing each task.
   .vete/
   ├── died/
   ├── done/
-  └── todo/
+  ├── todo/
   │   ├── amazon.json
   │   ├── apple.json
   │   ├── facebook.json
