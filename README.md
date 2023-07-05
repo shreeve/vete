@@ -69,10 +69,10 @@ four tasks as follows:
   ├── died/
   ├── done/
   └── todo/
-  │   ├── 20230410
-  │   ├── 20230411
-  │   ├── 20230412
-  │   └── 20230413
+      ├── 20230410
+      ├── 20230411
+      ├── 20230412
+      └── 20230413
 ```
 
 This file structure can be defined in the `setup` method, or you could choose to
@@ -115,11 +115,11 @@ are needed when processing each task.
   .vete/
   ├── died/
   ├── done/
-  ├── todo/
-  │   ├── amazon.json
-  │   ├── apple.json
-  │   ├── facebook.json
-  │   └── google.json
+  └── todo/
+      ├── amazon.json
+      ├── apple.json
+      ├── facebook.json
+      └── google.json
 ```
 
 ### Additional tips
