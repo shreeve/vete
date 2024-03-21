@@ -19,7 +19,7 @@ trap("INT"  ) { print clear + go; abort "\n" }
 trap("WINCH") { print clear or draw if @pid == Process.pid }
 
 OptionParser.new.instance_eval do
-  @version = "1.0.4"
+  @version = "1.0.5"
   @banner  = "usage: #{program_name} [options] [filename]"
 
   on "-b", "--bar <width>"            , "Progress bar width, in characters", Integer
@@ -78,7 +78,8 @@ end
 
 def vete_retry
   list = Dir.glob(File.join(@died, "*")).sort.each {|path| FileUtils.touch(path) }
-  list.empty? ? false : !!move(list, @todo)
+  todo = Dir.glob(File.join(@todo, "*"))
+  list.empty? ? !todo.empty? : !!move(list, @todo)
 end
 
 def vete_todo(path, data=nil)
